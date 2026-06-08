@@ -201,7 +201,7 @@
   <div class="container">
     <p class="title">Dager siden Eirik tok over leiligheten uten å ha flyttet inn</p>
     <p class="number" id="dayCount">?</p>
-    <p class="since">Siden 1. februar 2026</p>
+    <p class="since" id="sinceDate">Siden ?</p>
     <div class="ticker">
       <div class="dot"></div>
       <div class="dot"></div>
@@ -240,6 +240,7 @@
       numEl.textContent = days;
       numEl.style.transition = 'filter 0.6s ease';
       numEl.style.filter = 'blur(0px)';
+      document.getElementById('sinceDate').textContent = 'Siden 1. februar 2026';
 
       if (diff === 0) {
         result.textContent = 'Du traff blink! 🎯';
