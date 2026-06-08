@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Days since Eirik moved in</title>
+  <title>Eirik & leiligheten</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
@@ -19,17 +19,20 @@
       font-family: 'DM Sans', sans-serif;
     }
 
-    .container {
-      text-align: center;
-      padding: 3rem 2rem;
-      position: relative;
-    }
-
     .bg-circle {
       position: fixed;
       border-radius: 50%;
       background: #eceae3;
       z-index: 0;
+    }
+
+    .container {
+      text-align: center;
+      padding: 3rem 2rem;
+      position: relative;
+      z-index: 1;
+      max-width: 540px;
+      width: 100%;
     }
 
     .label {
@@ -40,8 +43,6 @@
       text-transform: uppercase;
       color: #888780;
       margin-bottom: 1rem;
-      position: relative;
-      z-index: 1;
     }
 
     .number {
@@ -51,8 +52,6 @@
       line-height: 1;
       color: #2c2c2a;
       letter-spacing: -4px;
-      position: relative;
-      z-index: 1;
     }
 
     .word {
@@ -63,8 +62,6 @@
       text-transform: uppercase;
       color: #888780;
       margin-top: 0.75rem;
-      position: relative;
-      z-index: 1;
     }
 
     .divider {
@@ -72,19 +69,16 @@
       height: 1px;
       background: #b4b2a9;
       margin: 1.75rem auto;
-      position: relative;
-      z-index: 1;
     }
 
     .title {
       font-family: 'Playfair Display', serif;
-      font-size: clamp(20px, 4vw, 30px);
+      font-size: clamp(16px, 3.5vw, 24px);
       font-weight: 400;
       color: #2c2c2a;
-      max-width: 380px;
-      line-height: 1.45;
-      position: relative;
-      z-index: 1;
+      max-width: 420px;
+      line-height: 1.5;
+      margin: 0 auto;
     }
 
     .since {
@@ -93,8 +87,6 @@
       color: #b4b2a9;
       margin-top: 1.5rem;
       letter-spacing: 0.05em;
-      position: relative;
-      z-index: 1;
     }
 
     .ticker {
@@ -102,8 +94,6 @@
       gap: 6px;
       justify-content: center;
       margin-top: 1.75rem;
-      position: relative;
-      z-index: 1;
     }
 
     .dot {
@@ -121,6 +111,71 @@
       50% { opacity: 1; transform: scale(1.5); }
     }
 
+    /* Guess section */
+    .guess-section {
+      margin-top: 2.5rem;
+      padding-top: 2rem;
+      border-top: 1px solid #e0ddd6;
+    }
+
+    .guess-label {
+      font-size: 12px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #888780;
+      margin-bottom: 1rem;
+    }
+
+    .guess-row {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .guess-input {
+      width: 120px;
+      padding: 10px 14px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      border: 1px solid #d3d1c7;
+      border-radius: 8px;
+      background: #fff;
+      color: #2c2c2a;
+      text-align: center;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .guess-input:focus { border-color: #888780; }
+
+    .guess-btn {
+      padding: 10px 20px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      background: #2c2c2a;
+      color: #f7f6f2;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .guess-btn:hover { opacity: 0.8; }
+
+    .guess-result {
+      margin-top: 1rem;
+      font-size: 14px;
+      color: #2c2c2a;
+      min-height: 22px;
+      font-weight: 400;
+      line-height: 1.5;
+    }
+
+    .guess-result.correct {
+      color: #3b6d11;
+      font-weight: 500;
+    }
+
     @media (prefers-color-scheme: dark) {
       body { background-color: #1a1a18; }
       .bg-circle { background: #2c2c2a; }
@@ -129,6 +184,12 @@
       .divider { background: #5f5e5a; }
       .since { color: #5f5e5a; }
       .dot { background: #5f5e5a; }
+      .guess-section { border-top-color: #3a3a38; }
+      .guess-input { background: #2c2c2a; border-color: #5f5e5a; color: #f1efe8; }
+      .guess-input:focus { border-color: #b4b2a9; }
+      .guess-btn { background: #f1efe8; color: #1a1a18; }
+      .guess-result { color: #f1efe8; }
+      .guess-result.correct { color: #97c459; }
     }
   </style>
 </head>
@@ -138,16 +199,22 @@
   <div class="bg-circle" style="width:350px;height:350px;bottom:-120px;left:-100px;opacity:0.5;"></div>
 
   <div class="container">
-    <p class="label">days since</p>
-    <p class="number" id="dayCount">0</p>
-    <p class="word">days</p>
-    <div class="divider"></div>
-    <p class="title">Eirik moved into<br>the apartment</p>
-    <p class="since" id="sinceDate"></p>
+    <p class="title">Dager siden Eirik tok over leiligheten uten å ha flyttet inn</p>
+    <p class="number" id="dayCount">?</p>
+    <p class="since">Siden 1. februar 2026</p>
     <div class="ticker">
       <div class="dot"></div>
       <div class="dot"></div>
       <div class="dot"></div>
+    </div>
+
+    <div class="guess-section">
+      <p class="guess-label">Gjett antall dager</p>
+      <div class="guess-row">
+        <input class="guess-input" type="number" id="guessInput" placeholder="0" min="0" />
+        <button class="guess-btn" onclick="checkGuess()">Gjett</button>
+      </div>
+      <p class="guess-result" id="guessResult"></p>
     </div>
   </div>
 
@@ -155,8 +222,37 @@
     const moveInDate = new Date('2026-02-01T00:00:00');
     const now = new Date();
     const days = Math.floor((now - moveInDate) / (1000 * 60 * 60 * 24));
-    document.getElementById('dayCount').textContent = days;
-    document.getElementById('sinceDate').textContent = 'Since 1 February 2026';
+
+    function checkGuess() {
+      const input = document.getElementById('guessInput');
+      const result = document.getElementById('guessResult');
+      const guessed = parseInt(input.value, 10);
+
+      if (isNaN(guessed) || input.value === '') {
+        result.textContent = 'Skriv inn et tall først.';
+        result.className = 'guess-result';
+        return;
+      }
+
+      const diff = Math.abs(guessed - days);
+
+      const numEl = document.getElementById('dayCount');
+      numEl.textContent = days;
+      numEl.style.transition = 'filter 0.6s ease';
+      numEl.style.filter = 'blur(0px)';
+
+      if (diff === 0) {
+        result.textContent = 'Du traff blink! 🎯';
+        result.className = 'guess-result correct';
+      } else {
+        result.textContent = `Du gjettet ${guessed} dager, men bommet med ${diff} dager. Riktig svar er ${days}.`;
+        result.className = 'guess-result';
+      }
+    }
+
+    document.getElementById('guessInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') checkGuess();
+    });
   </script>
 
 </body>
