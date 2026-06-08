@@ -31,44 +31,8 @@
       padding: 3rem 2rem;
       position: relative;
       z-index: 1;
-      max-width: 540px;
+      max-width: 600px;
       width: 100%;
-    }
-
-    .label {
-      font-family: 'DM Sans', sans-serif;
-      font-weight: 300;
-      font-size: 13px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: #888780;
-      margin-bottom: 1rem;
-    }
-
-    .number {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(90px, 22vw, 160px);
-      font-weight: 700;
-      line-height: 1;
-      color: #2c2c2a;
-      letter-spacing: -4px;
-    }
-
-    .word {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
-      font-weight: 500;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: #888780;
-      margin-top: 0.75rem;
-    }
-
-    .divider {
-      width: 40px;
-      height: 1px;
-      background: #b4b2a9;
-      margin: 1.75rem auto;
     }
 
     .title {
@@ -79,6 +43,15 @@
       max-width: 420px;
       line-height: 1.5;
       margin: 0 auto;
+    }
+
+    .number {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(90px, 22vw, 160px);
+      font-weight: 700;
+      line-height: 1;
+      color: #2c2c2a;
+      letter-spacing: -4px;
     }
 
     .since {
@@ -111,14 +84,13 @@
       50% { opacity: 1; transform: scale(1.5); }
     }
 
-    /* Guess section */
-    .guess-section {
+    .section {
       margin-top: 2.5rem;
       padding-top: 2rem;
       border-top: 1px solid #e0ddd6;
     }
 
-    .guess-label {
+    .section-label {
       font-size: 12px;
       letter-spacing: 0.15em;
       text-transform: uppercase;
@@ -133,8 +105,7 @@
       align-items: center;
     }
 
-    .guess-input {
-      width: 120px;
+    input[type="number"], input[type="text"], input[type="date"] {
       padding: 10px 14px;
       font-family: 'DM Sans', sans-serif;
       font-size: 15px;
@@ -146,9 +117,9 @@
       outline: none;
       transition: border-color 0.2s;
     }
-    .guess-input:focus { border-color: #888780; }
+    input:focus { border-color: #888780; }
 
-    .guess-btn {
+    .btn {
       padding: 10px 20px;
       font-family: 'DM Sans', sans-serif;
       font-size: 14px;
@@ -159,37 +130,96 @@
       border-radius: 8px;
       cursor: pointer;
       transition: opacity 0.2s;
+      white-space: nowrap;
     }
-    .guess-btn:hover { opacity: 0.8; }
+    .btn:hover { opacity: 0.8; }
+    .btn:disabled { opacity: 0.4; cursor: default; }
 
     .guess-result {
       margin-top: 1rem;
       font-size: 14px;
       color: #2c2c2a;
       min-height: 22px;
-      font-weight: 400;
       line-height: 1.5;
     }
+    .guess-result.correct { color: #3b6d11; font-weight: 500; }
 
-    .guess-result.correct {
-      color: #3b6d11;
+    .movein-row {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    input[type="text"] { width: 130px; }
+    input[type="date"] { width: 160px; }
+
+    .submit-msg {
+      margin-top: 1rem;
+      font-size: 13px;
+      color: #888780;
+      min-height: 20px;
+    }
+    .submit-msg.success { color: #3b6d11; }
+    .submit-msg.error { color: #a32d2d; }
+
+    .guesses-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      font-size: 14px;
+    }
+    .guesses-table th {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #888780;
       font-weight: 500;
+      padding: 6px 10px;
+      border-bottom: 1px solid #e0ddd6;
+      text-align: left;
+    }
+    .guesses-table td {
+      padding: 10px 10px;
+      border-bottom: 1px solid #f0ede6;
+      color: #2c2c2a;
+      text-align: left;
+    }
+    .guesses-table tr:last-child td { border-bottom: none; }
+    .days-away {
+      font-variant-numeric: tabular-nums;
+      color: #888780;
+      font-size: 13px;
+    }
+    .days-away.past { color: #a32d2d; }
+    .days-away.soon { color: #3b6d11; }
+
+    .loading-text {
+      font-size: 13px;
+      color: #b4b2a9;
+      margin-top: 1rem;
     }
 
     @media (prefers-color-scheme: dark) {
       body { background-color: #1a1a18; }
       .bg-circle { background: #2c2c2a; }
       .number, .title { color: #f1efe8; }
-      .label, .word { color: #888780; }
-      .divider { background: #5f5e5a; }
       .since { color: #5f5e5a; }
       .dot { background: #5f5e5a; }
-      .guess-section { border-top-color: #3a3a38; }
-      .guess-input { background: #2c2c2a; border-color: #5f5e5a; color: #f1efe8; }
-      .guess-input:focus { border-color: #b4b2a9; }
-      .guess-btn { background: #f1efe8; color: #1a1a18; }
+      .section { border-top-color: #3a3a38; }
+      input[type="number"], input[type="text"], input[type="date"] {
+        background: #2c2c2a; border-color: #5f5e5a; color: #f1efe8;
+      }
+      input:focus { border-color: #b4b2a9; }
+      .btn { background: #f1efe8; color: #1a1a18; }
       .guess-result { color: #f1efe8; }
       .guess-result.correct { color: #97c459; }
+      .guesses-table th { color: #5f5e5a; border-bottom-color: #3a3a38; }
+      .guesses-table td { color: #f1efe8; border-bottom-color: #2c2c2a; }
+      .submit-msg.success { color: #97c459; }
+      .submit-msg.error { color: #f09595; }
+      .loading-text { color: #5f5e5a; }
     }
   </style>
 </head>
@@ -199,6 +229,8 @@
   <div class="bg-circle" style="width:350px;height:350px;bottom:-120px;left:-100px;opacity:0.5;"></div>
 
   <div class="container">
+
+    <!-- Counter -->
     <p class="title">Dager siden Eirik tok over leiligheten uten å ha flyttet inn</p>
     <p class="number" id="dayCount">?</p>
     <p class="since" id="sinceDate">Siden ?</p>
@@ -208,17 +240,39 @@
       <div class="dot"></div>
     </div>
 
-    <div class="guess-section">
-      <p class="guess-label">Gjett antall dager</p>
+    <!-- Guess the days -->
+    <div class="section">
+      <p class="section-label">Gjett antall dager</p>
       <div class="guess-row">
-        <input class="guess-input" type="number" id="guessInput" placeholder="0" min="0" />
-        <button class="guess-btn" onclick="checkGuess()">Gjett</button>
+        <input type="number" id="guessInput" placeholder="0" min="0" style="width:120px;" />
+        <button class="btn" onclick="checkGuess()">Gjett</button>
       </div>
       <p class="guess-result" id="guessResult"></p>
     </div>
+
+    <!-- Guess move-in date -->
+    <div class="section">
+      <p class="section-label">Når tror du Eirik flytter inn?</p>
+      <div class="movein-row">
+        <input type="text" id="guessName" placeholder="Ditt navn" />
+        <input type="date" id="guessDate" />
+        <button class="btn" id="submitBtn" onclick="submitMoveInGuess()">Send inn</button>
+      </div>
+      <p class="submit-msg" id="submitMsg"></p>
+    </div>
+
+    <!-- Guesses table -->
+    <div class="section">
+      <p class="section-label">Alle gjetninger</p>
+      <div id="guessesContainer"><p class="loading-text">Laster gjetninger...</p></div>
+    </div>
+
   </div>
 
   <script>
+    const SUPABASE_URL = 'https://wgthuhflrjfrbfatoxye.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_hj2GeeYw1zzilAp5_rKCBw_YJ4kLuxD';
+
     const moveInDate = new Date('2026-02-01T00:00:00');
     const now = new Date();
     const days = Math.floor((now - moveInDate) / (1000 * 60 * 60 * 24));
@@ -235,7 +289,6 @@
       }
 
       const diff = Math.abs(guessed - days);
-
       const numEl = document.getElementById('dayCount');
       numEl.textContent = days;
       numEl.style.transition = 'filter 0.6s ease';
@@ -254,6 +307,105 @@
     document.getElementById('guessInput').addEventListener('keydown', function(e) {
       if (e.key === 'Enter') checkGuess();
     });
+
+    async function submitMoveInGuess() {
+      const name = document.getElementById('guessName').value.trim();
+      const date = document.getElementById('guessDate').value;
+      const msg = document.getElementById('submitMsg');
+      const btn = document.getElementById('submitBtn');
+
+      if (!name || !date) {
+        msg.textContent = 'Fyll inn både navn og dato.';
+        msg.className = 'submit-msg error';
+        return;
+      }
+
+      btn.disabled = true;
+      msg.textContent = 'Sender inn...';
+      msg.className = 'submit-msg';
+
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/guesses`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({ name, move_in_date: date })
+        });
+
+        if (!res.ok) throw new Error('Feil ved innsending');
+
+        msg.textContent = 'Gjetningen er registrert! 🎉';
+        msg.className = 'submit-msg success';
+        document.getElementById('guessName').value = '';
+        document.getElementById('guessDate').value = '';
+        loadGuesses();
+      } catch (e) {
+        msg.textContent = 'Noe gikk galt. Prøv igjen.';
+        msg.className = 'submit-msg error';
+      }
+
+      btn.disabled = false;
+    }
+
+    async function loadGuesses() {
+      const container = document.getElementById('guessesContainer');
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/guesses?select=name,move_in_date&order=move_in_date.asc`, {
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`
+          }
+        });
+
+        const data = await res.json();
+
+        if (!data.length) {
+          container.innerHTML = '<p class="loading-text">Ingen gjetninger ennå — vær den første!</p>';
+          return;
+        }
+
+        const today = new Date();
+        today.setHours(0,0,0,0);
+
+        let rows = data.map(g => {
+          const guessedDate = new Date(g.move_in_date);
+          const diffDays = Math.round((guessedDate - today) / (1000 * 60 * 60 * 24));
+          const isPast = diffDays < 0;
+          const isSoon = diffDays >= 0 && diffDays <= 14;
+          const daysLabel = isPast
+            ? `${Math.abs(diffDays)} dager siden`
+            : diffDays === 0 ? 'I dag!'
+            : `Om ${diffDays} dager`;
+          const cls = isPast ? 'days-away past' : isSoon ? 'days-away soon' : 'days-away';
+          const dateStr = guessedDate.toLocaleDateString('nb-NO', { day: 'numeric', month: 'long', year: 'numeric' });
+          return `<tr>
+            <td>${g.name}</td>
+            <td>${dateStr}</td>
+            <td class="${cls}">${daysLabel}</td>
+          </tr>`;
+        }).join('');
+
+        container.innerHTML = `
+          <table class="guesses-table">
+            <thead>
+              <tr>
+                <th>Navn</th>
+                <th>Dato</th>
+                <th>Dager til</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>`;
+      } catch (e) {
+        container.innerHTML = '<p class="loading-text">Kunne ikke laste gjetninger.</p>';
+      }
+    }
+
+    loadGuesses();
   </script>
 
 </body>
