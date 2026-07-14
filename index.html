@@ -105,7 +105,7 @@
       align-items: center;
     }
 
-    input[type="number"], input[type="text"], input[type="date"] {
+    input[type="number"], input[type="text"], input[type="date"], input[type="password"] {
       padding: 10px 14px;
       font-family: 'DM Sans', sans-serif;
       font-size: 15px;
@@ -187,11 +187,7 @@
       text-align: left;
     }
     .guesses-table tr:last-child td { border-bottom: none; }
-    .days-away {
-      font-variant-numeric: tabular-nums;
-      color: #888780;
-      font-size: 13px;
-    }
+    .days-away { font-variant-numeric: tabular-nums; color: #888780; font-size: 13px; }
     .days-away.past { color: #a32d2d; }
     .days-away.soon { color: #3b6d11; }
 
@@ -201,6 +197,90 @@
       margin-top: 1rem;
     }
 
+    /* Twist banner */
+    .twist-banner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      background: linear-gradient(135deg, #e8f5d0, #d4edaa);
+      border-radius: 12px;
+      padding: 14px 20px;
+      margin-top: 2rem;
+    }
+    .twist-emoji { font-size: 28px; }
+    .twist-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      color: #2c2c2a;
+      font-style: italic;
+    }
+
+    /* Odds box */
+    .odds-box {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      border-radius: 12px;
+      background: #2c2c2a;
+      color: #f7f6f2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .odds-label {
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #888780;
+    }
+    .odds-value {
+      font-family: 'Playfair Display', serif;
+      font-size: 48px;
+      font-weight: 700;
+      color: #f7f6f2;
+      line-height: 1;
+    }
+    .odds-sublabel {
+      font-size: 13px;
+      color: #888780;
+      margin-top: 2px;
+    }
+    .odds-edit-link {
+      margin-top: 8px;
+      font-size: 11px;
+      color: #5f5e5a;
+      cursor: pointer;
+      text-decoration: underline;
+      background: none;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .odds-edit-link:hover { color: #b4b2a9; }
+
+    /* Admin panel */
+    .admin-panel {
+      display: none;
+      margin-top: 1rem;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .admin-panel.visible { display: flex; }
+    .admin-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
+    }
+    .admin-msg {
+      font-size: 12px;
+      color: #888780;
+      min-height: 18px;
+    }
+    .admin-msg.success { color: #3b6d11; }
+    .admin-msg.error { color: #a32d2d; }
+
     @media (prefers-color-scheme: dark) {
       body { background-color: #1a1a18; }
       .bg-circle { background: #2c2c2a; }
@@ -208,7 +288,7 @@
       .since { color: #5f5e5a; }
       .dot { background: #5f5e5a; }
       .section { border-top-color: #3a3a38; }
-      input[type="number"], input[type="text"], input[type="date"] {
+      input[type="number"], input[type="text"], input[type="date"], input[type="password"] {
         background: #2c2c2a; border-color: #5f5e5a; color: #f1efe8;
       }
       input:focus { border-color: #b4b2a9; }
@@ -220,6 +300,15 @@
       .submit-msg.success { color: #97c459; }
       .submit-msg.error { color: #f09595; }
       .loading-text { color: #5f5e5a; }
+      .twist-banner { background: linear-gradient(135deg, #2a3d1a, #3a5522); }
+      .twist-text { color: #f1efe8; }
+      .odds-box { background: #f1efe8; }
+      .odds-label { color: #888780; }
+      .odds-value { color: #2c2c2a; }
+      .odds-sublabel { color: #888780; }
+      .odds-edit-link { color: #888780; }
+      .admin-msg.success { color: #97c459; }
+      .admin-msg.error { color: #f09595; }
     }
   </style>
 </head>
@@ -238,6 +327,29 @@
       <div class="dot"></div>
       <div class="dot"></div>
       <div class="dot"></div>
+    </div>
+
+    <!-- Twist prize -->
+    <div class="twist-banner">
+      <span class="twist-emoji">🍬</span>
+      <span class="twist-text">Gratis Twist-pose til vinneren</span>
+      <span class="twist-emoji">🍬</span>
+    </div>
+
+    <!-- Odds for Thai-dame -->
+    <div class="odds-box">
+      <span class="odds-label">Odds for Thai-dame</span>
+      <span class="odds-value" id="oddsValue">—</span>
+      <span class="odds-sublabel">mot 1</span>
+      <button class="odds-edit-link" onclick="toggleAdmin()">Oppdater odds</button>
+      <div class="admin-panel" id="adminPanel">
+        <div class="admin-row">
+          <input type="password" id="adminPassword" placeholder="Passord" style="width:130px;" />
+          <input type="number" id="newOdds" placeholder="Nye odds" step="0.1" min="0" style="width:120px;" />
+          <button class="btn" onclick="updateOdds()">Lagre</button>
+        </div>
+        <p class="admin-msg" id="adminMsg"></p>
+      </div>
     </div>
 
     <!-- Guess the days -->
@@ -271,7 +383,8 @@
 
   <script>
     const SUPABASE_URL = 'https://wgthuhflrjfrbfatoxye.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_hj2GeeYw1zzilAp5_rKCBw_YJ4kLuxD';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndndGh1aGZscmpmcmJmYXRveHllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5NDI3NTYsImV4cCI6MjA5NjUxODc1Nn0.zym7bRltIIm5Cu4Nsr4-uoHpRPd1oiLdVFwN4_WUIKc';
+    const ADMIN_PASSWORD = 'SomKidzaSeie';
 
     const moveInDate = new Date('2026-02-01T00:00:00');
     const now = new Date();
@@ -281,20 +394,17 @@
       const input = document.getElementById('guessInput');
       const result = document.getElementById('guessResult');
       const guessed = parseInt(input.value, 10);
-
       if (isNaN(guessed) || input.value === '') {
         result.textContent = 'Skriv inn et tall først.';
         result.className = 'guess-result';
         return;
       }
-
       const diff = Math.abs(guessed - days);
       const numEl = document.getElementById('dayCount');
       numEl.textContent = days;
       numEl.style.transition = 'filter 0.6s ease';
       numEl.style.filter = 'blur(0px)';
       document.getElementById('sinceDate').textContent = 'Siden 1. februar 2026';
-
       if (diff === 0) {
         result.textContent = 'Du traff blink! 🎯';
         result.className = 'guess-result correct';
@@ -313,17 +423,14 @@
       const date = document.getElementById('guessDate').value;
       const msg = document.getElementById('submitMsg');
       const btn = document.getElementById('submitBtn');
-
       if (!name || !date) {
         msg.textContent = 'Fyll inn både navn og dato.';
         msg.className = 'submit-msg error';
         return;
       }
-
       btn.disabled = true;
       msg.textContent = 'Sender inn...';
       msg.className = 'submit-msg';
-
       try {
         const res = await fetch(`${SUPABASE_URL}/rest/v1/guesses`, {
           method: 'POST',
@@ -335,9 +442,7 @@
           },
           body: JSON.stringify({ name, move_in_date: date })
         });
-
-        if (!res.ok) throw new Error('Feil ved innsending');
-
+        if (!res.ok) throw new Error();
         msg.textContent = 'Gjetningen er registrert! 🎉';
         msg.className = 'submit-msg success';
         document.getElementById('guessName').value = '';
@@ -347,7 +452,6 @@
         msg.textContent = 'Noe gikk galt. Prøv igjen.';
         msg.className = 'submit-msg error';
       }
-
       btn.disabled = false;
     }
 
@@ -355,57 +459,90 @@
       const container = document.getElementById('guessesContainer');
       try {
         const res = await fetch(`${SUPABASE_URL}/rest/v1/guesses?select=name,move_in_date&order=move_in_date.asc`, {
-          headers: {
-            'apikey': SUPABASE_KEY,
-            'Authorization': `Bearer ${SUPABASE_KEY}`
-          }
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
         });
-
         const data = await res.json();
-
         if (!data.length) {
           container.innerHTML = '<p class="loading-text">Ingen gjetninger ennå — vær den første!</p>';
           return;
         }
-
         const today = new Date();
         today.setHours(0,0,0,0);
-
-        let rows = data.map(g => {
+        const rows = data.map(g => {
           const guessedDate = new Date(g.move_in_date);
           const diffDays = Math.round((guessedDate - today) / (1000 * 60 * 60 * 24));
           const isPast = diffDays < 0;
           const isSoon = diffDays >= 0 && diffDays <= 14;
-          const daysLabel = isPast
-            ? `${Math.abs(diffDays)} dager siden`
-            : diffDays === 0 ? 'I dag!'
-            : `Om ${diffDays} dager`;
+          const daysLabel = isPast ? `${Math.abs(diffDays)} dager siden` : diffDays === 0 ? 'I dag!' : `Om ${diffDays} dager`;
           const cls = isPast ? 'days-away past' : isSoon ? 'days-away soon' : 'days-away';
           const dateStr = guessedDate.toLocaleDateString('nb-NO', { day: 'numeric', month: 'long', year: 'numeric' });
-          return `<tr>
-            <td>${g.name}</td>
-            <td>${dateStr}</td>
-            <td class="${cls}">${daysLabel}</td>
-          </tr>`;
+          return `<tr><td>${g.name}</td><td>${dateStr}</td><td class="${cls}">${daysLabel}</td></tr>`;
         }).join('');
-
-        container.innerHTML = `
-          <table class="guesses-table">
-            <thead>
-              <tr>
-                <th>Navn</th>
-                <th>Dato</th>
-                <th>Dager til</th>
-              </tr>
-            </thead>
-            <tbody>${rows}</tbody>
-          </table>`;
+        container.innerHTML = `<table class="guesses-table"><thead><tr><th>Navn</th><th>Dato</th><th>Dager til</th></tr></thead><tbody>${rows}</tbody></table>`;
       } catch (e) {
         container.innerHTML = '<p class="loading-text">Kunne ikke laste gjetninger.</p>';
       }
     }
 
+    async function loadOdds() {
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/settings?key=eq.thai_odds&select=value`, {
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+        });
+        const data = await res.json();
+        if (data && data.length) {
+          document.getElementById('oddsValue').textContent = data[0].value;
+        }
+      } catch (e) {}
+    }
+
+    function toggleAdmin() {
+      const panel = document.getElementById('adminPanel');
+      panel.classList.toggle('visible');
+    }
+
+    async function updateOdds() {
+      const password = document.getElementById('adminPassword').value;
+      const newOdds = document.getElementById('newOdds').value.trim();
+      const msg = document.getElementById('adminMsg');
+
+      if (password !== ADMIN_PASSWORD) {
+        msg.textContent = 'Feil passord.';
+        msg.className = 'admin-msg error';
+        return;
+      }
+      if (!newOdds) {
+        msg.textContent = 'Skriv inn nye odds.';
+        msg.className = 'admin-msg error';
+        return;
+      }
+
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/settings?key=eq.thai_odds`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({ value: newOdds })
+        });
+        if (!res.ok) throw new Error();
+        msg.textContent = 'Odds oppdatert! ✓';
+        msg.className = 'admin-msg success';
+        document.getElementById('oddsValue').textContent = newOdds;
+        document.getElementById('adminPassword').value = '';
+        document.getElementById('newOdds').value = '';
+        setTimeout(() => { document.getElementById('adminPanel').classList.remove('visible'); msg.textContent = ''; }, 2000);
+      } catch (e) {
+        msg.textContent = 'Noe gikk galt. Prøv igjen.';
+        msg.className = 'admin-msg error';
+      }
+    }
+
     loadGuesses();
+    loadOdds();
   </script>
 
 </body>
